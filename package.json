@@ -1,7 +1,7 @@
 {
-  "name": "HealthSpace",
+  "name": "City-Taxi",
   "version": "1.0.0",
-  "description": "Donations and Volunteering Platform",
+  "description": "The Best Taxi Service",
   "main": "app.js",
   "scripts": {
     "start": "nodemon --exec ts-node src/server.ts -e ts",
@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "ts-node src/seed/seed-runner"
   },
-  "author": "Anjula",
+  "author": "esoft",
   "license": "ISC",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
