@@ -1,5 +1,6 @@
 import { Express } from "express";
 import { UserEp } from "../end-points/user-ep";
+import axios from "axios";
 import multer from "multer";
 
 const storage = multer.diskStorage({
@@ -32,4 +33,7 @@ export function initUserRoutes(app: Express) {
     UserEp.resetPasswordValidationRules(),
     UserEp.resetPassword
   );
+  app.post("/api/public/current-location",UserEp.passengerReservationRide);
 }
+
+
