@@ -27,6 +27,11 @@ export const userSchema = new mongoose.Schema<IUser>(
       required: false,
     },
 
+    userName: {
+      type: Schema.Types.String,
+      required: false,
+    },  
+
     userType: {
       type: Schema.Types.String,
       required: false,
@@ -37,36 +42,7 @@ export const userSchema = new mongoose.Schema<IUser>(
       unique: true,
       required: false,
     },
-    userStatus: {
-      type: String,
-      enum: UserStatus,
-      default: UserStatus.ACTIVE,
-    },
-    packageBought: {
-      type: Schema.Types.String,
-      required: false,
-    },
-    isVerified: {
-      type: Schema.Types.Boolean,
-      required: false,
-    },
-    verificationToken: {
-      type: Schema.Types.String,
-      required: false,
-    },
 
-    paymentLink: {
-      type: Schema.Types.String,
-      required: false,
-    },
-    profilePicture: {
-      type: Schema.Types.String,
-      required: false,
-    },
-    coverImage: {
-      type: Schema.Types.String,
-      required: false,
-    },
     email: {
       type: Schema.Types.String,
       required: true,

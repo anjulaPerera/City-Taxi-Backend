@@ -21,8 +21,8 @@ export namespace UserDao {
 }
 
 
-  export async function loginWithEmail(
-    email: string,
+  export async function loginWithUserName(
+    userName: string,
     password: string,
     medium: string,
     remember: boolean,
@@ -38,7 +38,7 @@ export namespace UserDao {
         token: tokenString,
       };
     } else {
-      throw new ApplicationError("Incorrect email/password combination!");
+      throw new ApplicationError("Incorrect userName/password combination!");
     }
   }
 

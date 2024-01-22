@@ -1,5 +1,5 @@
 const LoginMethod = {
-  EMAIL: "EMAIL",
+  USERNAME: "USERNAME",
 };
 
 export default LoginMethod;

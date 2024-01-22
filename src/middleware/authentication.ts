@@ -30,7 +30,7 @@ export class Authentication {
     next: NextFunction
   ) {
     const userData: any = req.user;
-    if (userData.userType === UserType.SUPER_ADMIN) {
+    if (userData.userType === UserType.ADMIN) {
       next();
     } else {
       return res.status(403).json({
@@ -40,17 +40,15 @@ export class Authentication {
     }
   }
 
-  //level01 user validation
-  public static level01UserVerification(
+  public static passengerUserVerification(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     const userData: any = req.user;
     if (
-      userData.userType === UserType.LEVEL01 ||
-      userData.userType === UserType.SUPER_ADMIN
-
+      userData.userType === UserType.PASSENGER ||
+      userData.userType === UserType.ADMIN
     ) {
       next();
     } else {
@@ -60,16 +58,15 @@ export class Authentication {
       });
     }
   }
-  //level02 user validation
-  public static level02UserVerification(
+  public static driverUserVerification(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
     const userData: any = req.user;
     if (
-      userData.userType === UserType.LEVEL02 ||
-      userData.userType === UserType.SUPER_ADMIN
+      userData.userType === UserType.DRIVER ||
+      userData.userType === UserType.ADMIN
     ) {
       next();
     } else {

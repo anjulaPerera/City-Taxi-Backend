@@ -54,15 +54,13 @@ export namespace AdminDao {
   }
   export async function updatePayLink(
     userId: Types.ObjectId,
-    link: string,
-
+    link: string
   ): Promise<IUser> {
     let updateUser: IUser = await User.findOneAndUpdate(
       { _id: userId },
       {
         $set: {
           paymentLink: link,
-
         },
       },
       { new: true }
@@ -71,10 +69,9 @@ export namespace AdminDao {
     return updateUser;
   }
 
-
   export async function getUsers(limit: number, offset: number) {
     const userFound = await User.find({
-      userType: { $ne: UserType.SUPER_ADMIN },
+      userType: { $ne: UserType.ADMIN },
     })
       .skip(limit * (offset - 1))
       .limit(limit);

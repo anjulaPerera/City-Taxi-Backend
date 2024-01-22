@@ -17,16 +17,16 @@ import upload from "../middleware/upload-images";
 const { ObjectId } = require("mongodb");
 
 export namespace UserEp {
-  export function authenticateWithEmailValidationRules(): ValidationChain[] {
+  export function authenticateWithUserNameValidationRules(): ValidationChain[] {
     return [
-      Validations.email(),
+      Validations.userName(),
       Validations.password(),
       check("loginMethod")
         .notEmpty()
         .withMessage("loginMethod is required")
         .isString()
         .withMessage("loginMethod is not a String")
-        .isIn([LoginMethod.EMAIL])
+        .isIn([LoginMethod.USERNAME])
         .withMessage("loginMethod is not valid type"),
       check("remember")
         .notEmpty()
@@ -37,6 +37,26 @@ export namespace UserEp {
         .withMessage("remember is not valid type"),
     ];
   }
+  // export function authenticateWithEmailValidationRules(): ValidationChain[] {
+  //   return [
+  //     Validations.email(),
+  //     Validations.password(),
+  //     check("loginMethod")
+  //       .notEmpty()
+  //       .withMessage("loginMethod is required")
+  //       .isString()
+  //       .withMessage("loginMethod is not a String")
+  //       .isIn([LoginMethod.EMAIL])
+  //       .withMessage("loginMethod is not valid type"),
+  //     check("remember")
+  //       .notEmpty()
+  //       .withMessage("remember is required")
+  //       .isString()
+  //       .withMessage("remember is not a String")
+  //       .isIn(["TRUE", "FALSE"])
+  //       .withMessage("remember is not valid type"),
+  //   ];
+  // }
   // export function signUpWithEmailValidationRules(): ValidationChain[] {
   //   return [Validations.email(), Validations.password()];
   // }
@@ -52,7 +72,48 @@ export namespace UserEp {
     ];
   }
 
-  export async function authenticateWithEmail(
+  // export async function authenticateWithEmail(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) {
+  //   try {
+  //     const errors = validationResult(req);
+
+  //     if (!errors.isEmpty()) {
+  //       return res.sendError(errors.array()[0]["msg"]);
+  //     }
+
+  //     const email = req.body.email;
+  //     const password = req.body.password;
+  //     const loginMethod = req.body.loginMethod;
+  //     const remember = !!req.body.remember;
+
+  //     if (loginMethod == LoginMethod.EMAIL) {
+  //       let user: any = await User.findOne({ email: email });
+  //       if (!user) {
+  //         return res.sendError("User Not Found in the System");
+  //       }
+
+  //       UserDao.loginWithEmail(email, password, loginMethod, remember, user)
+  //         .then((token: string) => {
+  //           res.cookie("token", token, {
+  //             httpOnly: true,
+  //             secure: false,
+  //             maxAge: 3600000 * 24 * 30,
+  //           });
+
+  //           res.sendSuccess(token, "Successfully Logged In645!");
+  //         })
+  //         .catch(next);
+  //     } else {
+  //       return res.sendError("Not A Valid login Method");
+  //     }
+  //   } catch (err) {
+  //     return res.sendError(err);
+  //   }
+  // }
+  export async function authenticateWithUserName(
     req: Request,
     res: Response,
     next: NextFunction
@@ -64,18 +125,24 @@ export namespace UserEp {
         return res.sendError(errors.array()[0]["msg"]);
       }
 
-      const email = req.body.email;
+      const userName = req.body.userName;
       const password = req.body.password;
       const loginMethod = req.body.loginMethod;
       const remember = !!req.body.remember;
 
-      if (loginMethod == LoginMethod.EMAIL) {
-        let user: any = await User.findOne({ email: email });
+      if (loginMethod == LoginMethod.USERNAME) {
+        let user: any = await User.findOne({ userName: userName });
         if (!user) {
           return res.sendError("User Not Found in the System");
         }
 
-        UserDao.loginWithEmail(email, password, loginMethod, remember, user)
+        UserDao.loginWithUserName(
+          userName,
+          password,
+          loginMethod,
+          remember,
+          user
+        )
           .then((token: string) => {
             res.cookie("token", token, {
               httpOnly: true,
@@ -83,7 +150,7 @@ export namespace UserEp {
               maxAge: 3600000 * 24 * 30,
             });
 
-            res.sendSuccess(token, "Successfully Logged In645!");
+            res.sendSuccess(token, "Successfully Logged In!");
           })
           .catch(next);
       } else {
@@ -211,14 +278,18 @@ export namespace UserEp {
       const userName: string = generateRandomUserName(name, phone);
       console.log(userName);
       function generateRandomPassword(): string {
+        const timestamp = new Date().getTime().toString();
         const length = 12;
-        const characterSet =
-          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
 
-        let password = "";
-        for (let i = 0; i < length; i++) {
-          const randomIndex = Math.floor(Math.random() * characterSet.length);
-          password += characterSet.charAt(randomIndex);
+        const alphaCharacters =
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        let password = timestamp.slice(-length + 2);
+        for (let i = 0; i < 2; i++) {
+          const randomAlphaIndex = Math.floor(
+            Math.random() * alphaCharacters.length
+          );
+          password += alphaCharacters.charAt(randomAlphaIndex);
         }
 
         return password;
@@ -235,6 +306,8 @@ export namespace UserEp {
         userName: userName,
         password: password,
       };
+
+      console.log("userData===>", userData);
 
       const saveUser = await UserDao.registerAnUser(userData);
 

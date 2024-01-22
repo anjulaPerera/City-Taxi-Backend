@@ -11,6 +11,13 @@ export const Validations = {
       .isEmail()
       .normalizeEmail({ gmail_remove_dots: false })
       .withMessage("Invalid email address!"),
+  userName: () =>
+    check("userName")
+      .not()
+      .isEmpty()
+      .withMessage("userName is required!")
+      .isString()
+      .withMessage("userName is not a String"),
   phone: () =>
     check("phone")
       .isMobilePhone("en-US")
