@@ -349,41 +349,5 @@ export namespace UserEp {
     };
   }
 
-  // export async function verifyEmail(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ) {
-  //   try {
-  //     const email = req.query.email as string;
-  //     const verificationToken = req.query.token as string;
-
-  //     const user = await UserDao.getUserByEmail(email);
-
-  //     if (!user) {
-  //       return res.sendError("User Not Found");
-  //     }
-
-  //     if (user.verificationToken !== verificationToken) {
-  //       return res.sendError("Invalid verification token");
-  //     }
-
-  //     const userData: DUser = {
-  //       userStatus: UserStatus.ACTIVE,
-  //       isVerified: true,
-  //       verificationToken: null,
-  //     };
-
-  //     const updatedUser = await AdminDao.verifyUser(
-  //       user._id,
-  //       userData.userStatus,
-  //       userData.isVerified,
-  //       userData.verificationToken
-  //     );
-
-  //     res.sendSuccess(updatedUser, "Email verification successful");
-  //   } catch (err) {
-  //     return res.sendError("Something Went Wrong");
-  //   }
-  // }
+ 
 }

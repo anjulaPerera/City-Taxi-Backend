@@ -3,16 +3,7 @@ import { UserEp } from "../end-points/user-ep";
 import axios from "axios";
 import multer from "multer";
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // specify the folder where files will be stored
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname); // specify the file name
-  },
-});
 
-const upload = multer({ storage: storage, limits: { fileSize: 10000000 } });
 
 export function initUserRoutes(app: Express) {
   /* PUBLIC ROUTES */
@@ -33,7 +24,5 @@ export function initUserRoutes(app: Express) {
     UserEp.resetPasswordValidationRules(),
     UserEp.resetPassword
   );
-  app.post("/api/public/current-location",UserEp.passengerReservationRide);
+  app.post("/api/public/current-location", UserEp.passengerReservationRide);
 }
-
-
