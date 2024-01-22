@@ -1,4 +1,3 @@
-
 import { NextFunction, Request, Response } from "express";
 import {
   check,
@@ -17,12 +16,7 @@ import UserStatus from "../enums/UserStatus";
 import upload from "../middleware/upload-images";
 const { ObjectId } = require("mongodb");
 
-
-
 export namespace UserEp {
-
-  
-
   export function authenticateWithEmailValidationRules(): ValidationChain[] {
     return [
       Validations.email(),
@@ -132,7 +126,6 @@ export namespace UserEp {
     }
   }
 
-
   export function resetPasswordValidationRules(): ValidationChain[] {
     return [
       check("currentPassword")
@@ -184,124 +177,128 @@ export namespace UserEp {
     }
   }
 
- 
-  
   export async function signUpUser(
-  req: Request & { file: any },
-  res: Response,
-  next: NextFunction
+    req: Request & { file: any },
+    res: Response,
+    next: NextFunction
   ) {
     try {
       const isCustomerFound = await UserDao.doesUserExist(req.body.email);
-    if (isCustomerFound) {
-      return res.sendError('Sorry, this email already exists');
+      if (isCustomerFound) {
+        return res.sendError("Sorry, this email already exists");
       }
-      
-
       const name = req.body.name;
-      const dob = req.body.dob;
-      const city = req.body.city;
       const phone = req.body.phone;
       const userType = req.body.userType;
-      const password = req.body.password;
-      const isVerified = false;
-      const occupation = req.body.occupation;
+
       const email = req.body.email;
 
-      console.log("req.file", req.file)
-      console.log("req.body", req.body)
+      function getRandomDigits(length: number): string {
+        const randomDigits = Math.floor(Math.random() * Math.pow(10, length));
+        return randomDigits.toString().padStart(length, "0");
+      }
 
+      function generateRandomUserName(name: string, phone: string): string {
+        const lastFourDigits = phone.slice(-4);
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getDate()}/${
+          currentDate.getMonth() + 1
+        }`;
 
+        return `${name}${lastFourDigits}${formattedDate}`;
+      }
 
-      const coverImage = req.files['coverImage'] ? `uploads/${req.files['coverImage'][0].filename}` : undefined;
-      const profilePicture = req.files['profilePicture'] ? `uploads/${req.files['profilePicture'][0].filename}` : undefined;
-    
-      console.log('profilePicture from request', profilePicture)
-      console.log('coverImage from request', coverImage)
+      const userName: string = generateRandomUserName(name, phone);
+      console.log(userName);
+      function generateRandomPassword(): string {
+        const length = 12;
+        const characterSet =
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
 
-      const verificationToken = Util.generateVerificationToken();
+        let password = "";
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characterSet.length);
+          password += characterSet.charAt(randomIndex);
+        }
+
+        return password;
+      }
+
+      const password: string = generateRandomPassword();
+      console.log(password);
 
       const userData: DUser = {
         name: name,
         email: email,
         userType: userType,
-        password: password,
-        userStatus: UserStatus.PENDING_VERIFICATION,
-        isVerified: isVerified,
-        verificationToken: verificationToken,
-        dob: dob,
-        city: city,
         phone: phone,
-        occupation: occupation,
-        profilePicture: profilePicture,
-        coverImage: coverImage,
+        userName: userName,
+        password: password,
       };
 
       const saveUser = await UserDao.registerAnUser(userData);
 
       if (!saveUser) {
-        return res.sendError('Registration failed');
+        return res.sendError("Registration failed");
       }
 
-      Util.sendVerificationEmail(email, verificationToken).then(
+      Util.sendVerificationEmail(email, userName, password).then(
         function (response) {
           if (response === 1) {
-            console.log('Email Sent Successfully!');
+            console.log("Email Sent Successfully!");
           } else {
-            console.log('Failed to Send The Email!');
+            console.log("Failed to Send The Email!");
           }
         },
         function (error) {
-          console.log('Email Function Failed!');
+          console.log("Email Function Failed!");
         }
       );
 
-      console.log('saveUser', saveUser);
-      return res.sendSuccess(saveUser, 'User Registered!');
+      console.log("saveUser", saveUser);
+      return res.sendSuccess(saveUser, "User Registered!");
       // }
       // );
-  } catch (err) {
-    return res.sendError(err);
-  }
-}
-
-  export async function verifyEmail(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const email = req.query.email as string;
-      const verificationToken = req.query.token as string;
-
-
-
-      const user = await UserDao.getUserByEmail(email);
-
-      if (!user) {
-        return res.sendError("User Not Found");
-      }
-
-      if (user.verificationToken !== verificationToken) {
-        return res.sendError("Invalid verification token");
-      }
-
-      const userData: DUser = {
-        userStatus: UserStatus.ACTIVE,
-        isVerified: true,
-        verificationToken: null,
-      };
-
-      const updatedUser = await AdminDao.verifyUser(
-        user._id,
-        userData.userStatus,
-        userData.isVerified,
-        userData.verificationToken
-      );
-
-      res.sendSuccess(updatedUser, "Email verification successful");
     } catch (err) {
-      return res.sendError("Something Went Wrong");
+      return res.sendError(err);
     }
   }
+
+  // export async function verifyEmail(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) {
+  //   try {
+  //     const email = req.query.email as string;
+  //     const verificationToken = req.query.token as string;
+
+  //     const user = await UserDao.getUserByEmail(email);
+
+  //     if (!user) {
+  //       return res.sendError("User Not Found");
+  //     }
+
+  //     if (user.verificationToken !== verificationToken) {
+  //       return res.sendError("Invalid verification token");
+  //     }
+
+  //     const userData: DUser = {
+  //       userStatus: UserStatus.ACTIVE,
+  //       isVerified: true,
+  //       verificationToken: null,
+  //     };
+
+  //     const updatedUser = await AdminDao.verifyUser(
+  //       user._id,
+  //       userData.userStatus,
+  //       userData.isVerified,
+  //       userData.verificationToken
+  //     );
+
+  //     res.sendSuccess(updatedUser, "Email verification successful");
+  //   } catch (err) {
+  //     return res.sendError("Something Went Wrong");
+  //   }
+  // }
 }

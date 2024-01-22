@@ -1,19 +1,14 @@
 import * as mongoose from "mongoose";
 import { Types } from "mongoose";
+import UserType from './../enums/UserType';
 
 interface Common {
   name?: string;
+  userName?: string;
   userType?: string;
   password?: string;
-  userStatus?: string;
-  isVerified?: boolean;
-  verificationToken?: string;
-  dob?: Date;
-  city?: string;
   phone?: number;
-  occupation?: string;
-  profilePicture?: string | Buffer;
-  coverImage?: string;
+
   email?:string
 
 }
