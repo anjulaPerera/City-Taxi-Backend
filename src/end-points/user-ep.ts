@@ -337,17 +337,7 @@ export namespace UserEp {
     }
   }
 
-  export async function passengerReservationRide(req: Request, res: Response) {
-    (req, res) => {
-      const reservationData = req.body;
-      console.log("Received reservation:", reservationData);
 
-      res.json({
-        message: "Location received successfully",
-        data: reservationData,
-      });
-    };
-  }
 
  
 }

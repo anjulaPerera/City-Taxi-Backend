@@ -22,5 +22,4 @@ export function initUserRoutes(app: Express) {
     UserEp.resetPasswordValidationRules(),
     UserEp.resetPassword
   );
-  app.post("/api/public/current-location", UserEp.passengerReservationRide);
 }
