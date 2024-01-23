@@ -3,8 +3,6 @@ import { UserEp } from "../end-points/user-ep";
 import axios from "axios";
 import multer from "multer";
 
-
-
 export function initUserRoutes(app: Express) {
   /* PUBLIC ROUTES */
   app.post(

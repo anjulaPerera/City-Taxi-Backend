@@ -10,16 +10,15 @@ export namespace UserDao {
   }
 
   export async function registerAnUser(data: DUser): Promise<IUser> {
-  try {
-    const saveUser = new User(data);
-    const userSaved = await saveUser.save();
-    return userSaved;
-  } catch (error) {
-    console.error('Error saving user:', error);
-    throw error;
+    try {
+      const saveUser = new User(data);
+      const userSaved = await saveUser.save();
+      return userSaved;
+    } catch (error) {
+      console.error("Error saving user:", error);
+      throw error;
+    }
   }
-}
-
 
   export async function loginWithUserName(
     userName: string,
