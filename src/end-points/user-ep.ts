@@ -339,5 +339,45 @@ export namespace UserEp {
 
 
 
- 
+  class PassengerLocationManager {
+    savePassengerLocation(location: { lat: number; lng: number }): void {
+      // Implement the logic to save passenger location
+      console.log("Passenger location saved:", location);
+    }
+
+    getNearbyDrivers(driverLocations: Record<string, { lat: number; lng: number }>): string[] {
+      // Implement the logic to calculate nearby drivers
+      console.log("Calculating nearby drivers...");
+      const nearbyDrivers: string[] = [];
+
+      for (const driverId in driverLocations) {
+        const driverLocation = driverLocations[driverId];
+        // Implement your logic to determine if a driver is nearby
+        nearbyDrivers.push(driverId);
+      }
+
+      return nearbyDrivers;
+    }
+  }
+
+  export async function getNearbyDrivers(req: Request, res: Response) {
+    // Hardcoded passenger location
+    const passengerLocation = { lat: 37.7750, lng: -122.4183 };
+
+    // Create an instance of PassengerLocationManager
+    const passengerLocationManager = new PassengerLocationManager();
+    passengerLocationManager.savePassengerLocation(passengerLocation);
+
+    // Hardcoded driver locations
+    const driverLocations: Record<string, { lat: number; lng: number }> = {
+      driver1: { lat: 37.7749, lng: -122.4194 },
+      driver2: { lat: 37.7740, lng: -122.4230 },
+    };
+
+    // Calculate nearby drivers
+    const nearbyDrivers = passengerLocationManager.getNearbyDrivers(driverLocations);
+
+    res.json({ nearbyDrivers });
+  }
 }
+

@@ -5,6 +5,8 @@ import { initAdminRoutes } from "./admin";
 import { initPostsRoutes } from "./posts";
 import { initRidesRoutes } from "./rides";
 
+
+
 export function initRoutes(app: Express) {
   app.get("/", (req: Request, res: Response) => {
     res.send("Well done!");
@@ -12,8 +14,9 @@ export function initRoutes(app: Express) {
 
   initUserRoutes(app);
   initAdminRoutes(app);
-  initPostsRoutes(app);
+  initPostsRoutes(app); 
   initRidesRoutes(app);
+
 
   /* ALL INVALID REQUESTS */
   app.get("/", (req: Request, res: Response) => res.redirect(301, "/api/v1"));
