@@ -3,8 +3,6 @@ import { UserEp } from "../end-points/user-ep";
 import axios from "axios";
 import multer from "multer";
 
-
-
 export function initUserRoutes(app: Express) {
   /* PUBLIC ROUTES */
   app.post(
@@ -24,5 +22,4 @@ export function initUserRoutes(app: Express) {
     UserEp.resetPasswordValidationRules(),
     UserEp.resetPassword
   );
-  app.post("/api/public/current-location", UserEp.passengerReservationRide);
 }
