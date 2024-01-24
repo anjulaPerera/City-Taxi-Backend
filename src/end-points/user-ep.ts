@@ -354,39 +354,60 @@ export namespace UserEp {
       // Implement the logic to save passenger location
       console.log("Passenger location saved:", location);
     }
-
-    getNearbyDrivers(driverLocations: Record<string, { lat: number; lng: number }>): string[] {
+  
+    // Function to calculate the distance between two coordinates using the Haversine formula
+    private calculateDistance(coord1: { lat: number; lng: number }, coord2: { lat: number; lng: number }): number {
+      const R = 6371; // Earth radius in kilometers
+      const dLat = (coord2.lat - coord1.lat) * (Math.PI / 180);
+      const dLng = (coord2.lng - coord1.lng) * (Math.PI / 180);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(coord1.lat * (Math.PI / 180)) * Math.cos(coord2.lat * (Math.PI / 180)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+      return distance;
+    }
+  
+    getNearbyDrivers(passengerLocation: { lat: number; lng: number }, driverLocations: Record<string, { lat: number; lng: number }>): string[] {
       // Implement the logic to calculate nearby drivers
       console.log("Calculating nearby drivers...");
       const nearbyDrivers: string[] = [];
-
+  
       for (const driverId in driverLocations) {
         const driverLocation = driverLocations[driverId];
-        // Implement your logic to determine if a driver is nearby
-        nearbyDrivers.push(driverId);
+  
+        // Calculate distance between passenger and driver
+        const distance = this.calculateDistance(passengerLocation, driverLocation);
+  
+        // If the distance is less than 3km, consider the driver as nearby
+        if (distance <= 3) {
+          nearbyDrivers.push(driverId);
+        }
       }
-
+  
       return nearbyDrivers;
     }
   }
-
+  
   export async function getNearbyDrivers(req: Request, res: Response) {
     // Hardcoded passenger location
-    const passengerLocation = { lat: 37.7750, lng: -122.4183 };
-
+    const passengerLocation = { lat: 7.000219, lng: 79.906700 };
+  
     // Create an instance of PassengerLocationManager
     const passengerLocationManager = new PassengerLocationManager();
     passengerLocationManager.savePassengerLocation(passengerLocation);
-
+  
     // Hardcoded driver locations
     const driverLocations: Record<string, { lat: number; lng: number }> = {
-      driver1: { lat: 37.7749, lng: -122.4194 },
-      driver2: { lat: 37.7740, lng: -122.4230 },
+      driver1: { lat: 7.000375, lng: 79.906258 },
+      driver2: { lat: 6.999584, lng: 79.907257 },
+      driver3: { lat: 6.999808, lng: 79.906787 },
+      driver4: { lat: 37.7740, lng: -122.4230 },
     };
-
+  
     // Calculate nearby drivers
-    const nearbyDrivers = passengerLocationManager.getNearbyDrivers(driverLocations);
-
+    const nearbyDrivers = passengerLocationManager.getNearbyDrivers(passengerLocation, driverLocations);
+  
     res.json({ nearbyDrivers });
   }
 }

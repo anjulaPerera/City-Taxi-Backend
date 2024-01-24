@@ -6,6 +6,6 @@ import multer from "multer";
 
 
 export function initRidesRoutes(app: Express) {
-  app.get("/api/auth/get/near-drivers/:userId", UserEp.getNearbyDrivers);
+  app.get("/api/get/near-drivers/:userId", UserEp.getNearbyDrivers);
 
 }
