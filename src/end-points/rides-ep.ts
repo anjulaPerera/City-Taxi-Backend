@@ -36,17 +36,13 @@ export namespace RidesEp {
   }
 
   export async function getDriversInside3Km(req: Request, res: Response) {
-    // Access the stored reservationData
-    console.log("Accessing reservationData:", reservationData);
+    console.log("pickup lat:", reservationData.pickup.coordinates.lat);
+    console.log("pickup lng:", reservationData.pickup.coordinates.lng);
 
     const passengerLocation = {
-      lat: 53456,
-      lng: 456546,
+      lat: reservationData.pickup.coordinates.lat,
+      lng: reservationData.pickup.coordinates.lng,
     };
-    // const passengerLocation = {
-    //   lat: reservationData.pickup.coordinates.lat,
-    //   lng: reservationData.pickup.coordinates.lng,
-    // };
 
     console.log("Passenger location::::", passengerLocation);
 
