@@ -15,8 +15,8 @@ interface Common {
       long: number;
       lat: number;
     };
-  
-  }
+  };
+  availabilityOfDriver?: String;
 }
 
 export interface DUser extends Common {

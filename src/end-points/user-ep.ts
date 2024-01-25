@@ -6,6 +6,7 @@ import {
   validationResult,
 } from "express-validator";
 import { DUser } from "../models/user-model";
+import * as $ from 'jquery';
 import { AdminDao } from "../dao/admin-dao";
 import LoginMethod from "../enums/LoginMethod";
 import User from "../schemas/user-schema";
@@ -337,6 +338,40 @@ export namespace UserEp {
     }
   }
 
+  export async function makeDriverAvailable(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = req.params.userId;
 
+      const driverAvailability = await UserDao.makeDriverAvailable(userId);
+
+      if (!driverAvailability) {
+        return res.sendError("Something Went Wrong!!");
+      }
+      res.sendSuccess(driverAvailability, "Driver Availability Updated!");
+    } catch (err) {
+      return res.sendError("Something Went Wrong!!");
+    }
+  }
+  export async function makeDriverBusy(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = req.params.userId;
+
+      const driverAvailability = await UserDao.makeDriverBusy(userId);
+
+      if (!driverAvailability) {
+        return res.sendError("Something Went Wrong!!");
+      }
+      res.sendSuccess(driverAvailability, "Driver Availability Updated!");
+    } catch (err) {
+      return res.sendError("Something Went Wrong!!");
+    }
+  }
 }
-

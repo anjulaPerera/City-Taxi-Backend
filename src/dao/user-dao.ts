@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { ApplicationError } from "../common/application-error";
 import { DUser, IUser } from "../models/user-model";
 import User from "../schemas/user-schema";
+import DriverAvailability from "../enums/DriverAvailability";
 
 export namespace UserDao {
   export async function doesUserExist(email: string) {
@@ -71,4 +72,37 @@ export namespace UserDao {
   export async function getUsersByGoldPackage(): Promise<IUser[]> {
     return await User.find({ packageBought: "GOLD" }).exec();
   }
+  // export async function makeDriverAvailable(userId: String): Promise<IUser[]> {
+  //   return await User.findOneAndUpdate({ _id : userId }).exec();
+  // }
+
+  export async function makeDriverAvailable(
+    userId: any
+  ): Promise<IUser | null> {
+    try {
+      const driver = await User.findOneAndUpdate(
+        { _id: userId },
+        { $set: { availabilityOfDriver: DriverAvailability.AVAILABLE } },
+        { new: true }
+      );
+      return driver;
+    } catch (error) {
+      console.error("Error updating post:", error);
+      return null;
+    }
+  }
+
+  export async function makeDriverBusy(userId: any): Promise<IUser | null> {
+    try {
+      const driver = await User.findOneAndUpdate(
+        { _id: userId },
+        { $set: { availabilityOfDriver: DriverAvailability.BUSY } },
+        { new: true }
+      );
+      return driver;
+    } catch (error) {
+      console.error("Error updating post:", error);
+      return null;
+    }
+  }
 }

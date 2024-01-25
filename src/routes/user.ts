@@ -20,4 +20,7 @@ export function initUserRoutes(app: Express) {
     UserEp.resetPasswordValidationRules(),
     UserEp.resetPassword
   );
+
+  app.post("/api/auth/driver/available/:userId", UserEp.makeDriverAvailable);
+  app.post("/api/auth/driver/busy/:userId", UserEp.makeDriverBusy);
 }
