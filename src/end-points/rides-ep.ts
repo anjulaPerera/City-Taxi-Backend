@@ -1,16 +1,33 @@
 import { NextFunction, Request, Response } from "express";
+import { RidesDao } from "../dao/rides-dao";
+import { DRegRides } from "../models/reg-rides-model";
 
 export namespace RidesEp {
   let reservationData: any;
   export async function passengerReservationRide(req: Request, res: Response) {
-    console.log("Inside API");
-    reservationData = req.body;
-    console.log("Received reservation:", reservationData);
+    const user = req.user;
+    console.log("user:=======>", user);
+    console.log("user._id", user._id);
+    
+    const currentDate = new Date();
 
-    res.json({
-      message: "Location received successfully",
-      data: reservationData,
-    });
+    const currentHours = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+    const currentTime =
+      currentHours + ":" + (currentMinutes < 10 ? "0" : "") + currentMinutes;
+
+    const reservationData: DRegRides = {
+      from: req.body.pickup,
+      to: req.body.dropoff,
+      vehicleType: req.body.selectedVehicle,
+      passengerId: user._id.toString(), // Assuming user.id is the passengerId
+      date: new Date(), // Add the date from the request
+      time: currentTime,
+    };
+
+
+    const reservation = await RidesDao.saveReservation(reservationData);
+
   }
 
   class LocationManager {
@@ -49,6 +66,19 @@ export namespace RidesEp {
     // Create an instance of PassengerLocationManager
     const locationManager = new LocationManager();
     locationManager.savePassengerLocation(passengerLocation);
+
+    // Hardcoded driver locations
+    const driverLocations: Record<string, { lat: number; lng: number }> = {
+      driver1: { lat: 7.019214, lng: 79.97732 }, //7.019214, 79.977320
+      driver2: { lat: 6.987857, lng: 80.001625 }, //6.987857, 80.001625
+    };
+
+    // Calculate nearby drivers
+    const nearbyDrivers = locationManager.getNearbyDrivers(driverLocations);
+
+    res.json({ nearbyDrivers });
+  }
+}
 
     // Hardcoded driver locations
     const driverLocations: Record<string, { lat: number; lng: number }> = {

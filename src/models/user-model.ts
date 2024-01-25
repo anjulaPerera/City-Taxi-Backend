@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
-import { Types } from "mongoose";
-import UserType from './../enums/UserType';
+import { Schema, Types } from "mongoose";
+import UserType from "./../enums/UserType";
 
 interface Common {
   name?: string;
@@ -8,9 +8,7 @@ interface Common {
   userType?: string;
   password?: string;
   phone?: number;
-
-  email?:string
-
+  email?: string;
 }
 
 export interface DUser extends Common {
@@ -19,6 +17,5 @@ export interface DUser extends Common {
 
 export interface IUser extends Common, mongoose.Document {
   createAccessToken(expiresIn?: string): string;
-
   comparePassword(password: string): Promise<boolean>;
 }

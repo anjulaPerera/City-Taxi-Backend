@@ -30,7 +30,7 @@ export const userSchema = new mongoose.Schema<IUser>(
     userName: {
       type: Schema.Types.String,
       required: false,
-    },  
+    },
 
     userType: {
       type: Schema.Types.String,
@@ -46,7 +46,7 @@ export const userSchema = new mongoose.Schema<IUser>(
     email: {
       type: Schema.Types.String,
       required: true,
-    }
+    },
   },
   UserSchemaOptions
 );

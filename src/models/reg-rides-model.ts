@@ -2,14 +2,14 @@ import * as mongoose from "mongoose";
 import { Types } from "mongoose";
 
 interface Common {
-  passengerId: Types.ObjectId;
-  driverId: Types.ObjectId;
+  passengerId: string;
+  driverId?: string;
   from: string;
   to: string;
   date: Date;
   time: string;
   price?: number;
-  vehicleType: string;
+  vehicleType?: string;
 }
 
 export interface DRegRides extends Common {

@@ -11,27 +11,51 @@ const regSchema = new mongoose.Schema({
   driverId: {
     type: Types.ObjectId,
     ref: "User",
-    required: true,
+    required: false,
   },
 
   from: {
-    type: String,
-    required: true,
+    address: {
+      type: String,
+      required: false,
+    },
+    coordinates: {
+      lat: {
+        type: Number,
+        required: false,
+      },
+      lng: {
+        type: Number,
+        required: false,
+      },
+    },
   },
 
   to: {
-    type: String,
-    required: true,
+    address: {
+      type: String,
+      required: false,
+    },
+    coordinates: {
+      lat: {
+        type: Number,
+        required: false,
+      },
+      lng: {
+        type: Number,
+        required: false,
+      },
+    },
   },
 
   date: {
     type: Date,
-    required: true,
+    required: false,
   },
 
   time: {
     type: String,
-    required: true,
+    required: false,
   },
 
   price: {
@@ -41,7 +65,7 @@ const regSchema = new mongoose.Schema({
 
   vehicleType: {
     type: String,
-    required: true,
+    required: false,
   },
 
   createdAt: {
