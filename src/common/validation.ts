@@ -70,20 +70,20 @@ export const Validations = {
   noPermissions: () => check("permissions").not().exists(),
   zip: () => check("zip").isPostalCode("US").withMessage("Invalid zip code!"),
   currency: (key: string = "price") => check(key).not().isEmpty().isNumeric(),
-  objectId: (key: string = "_id") =>
-    check(key)
-      .not()
-      .isEmpty()
-      .withMessage(`${key} cannot be empty`)
-      .custom((value: any) => isObjectId(value))
-      .withMessage(`${key} is not a valid mongoDb objectID`),
-  uploads: (key: string = "uploads") =>
-    check(`${key}.*._id`)
-      .not()
-      .isEmpty()
-      .withMessage(`${key} objects cannot be empty`)
-      .custom((value: any) => isObjectId(value))
-      .withMessage(`${key} objects are invalid`),
+  // objectId: (key: string = "_id") =>
+  //   check(key)
+  //     .not()
+  //     .isEmpty()
+  //     .withMessage(`${key} cannot be empty`)
+  //     .custom((value: any) => isObjectId(value))
+  //     .withMessage(`${key} is not a valid mongoDb objectID`),
+  // uploads: (key: string = "uploads") =>
+  //   check(`${key}.*._id`)
+  //     .not()
+  //     .isEmpty()
+  //     .withMessage(`${key} objects cannot be empty`)
+  //     .custom((value: any) => isObjectId(value))
+  //     .withMessage(`${key} objects are invalid`),
   validString: (key: string) =>
     check(key)
       .notEmpty()
