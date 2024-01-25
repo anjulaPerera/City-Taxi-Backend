@@ -75,14 +75,13 @@ export const Validations = {
       .not()
       .isEmpty()
       .withMessage(`${key} cannot be empty`)
-      .custom(isObjectId())
+      .custom(isObjectId)
       .withMessage(`${key} is not a valid mongoDb objectID`),
   uploads: (key: string = "uploads") =>
     check(`${key}.*._id`)
       .not()
       .isEmpty()
       .withMessage(`${key} objects cannot be empty`)
-      .custom(isObjectId())
       .withMessage(`${key} objects are invalid`),
   validString: (key: string) =>
     check(key)
