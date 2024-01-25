@@ -6,8 +6,7 @@ interface Common {
   driverId?: string;
   from: string;
   to: string;
-  date: Date;
-  time: string;
+  time: Date;
   price?: number;
   vehicleType?: string;
 }

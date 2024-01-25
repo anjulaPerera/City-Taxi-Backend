@@ -1,32 +1,37 @@
 import { NextFunction, Request, Response } from "express";
 import { RidesDao } from "../dao/rides-dao";
 import { DRegRides } from "../models/reg-rides-model";
+import { IUser } from "../models/user-model";
 
 export namespace RidesEp {
   let reservationData: any;
   export async function passengerReservationRide(req: Request, res: Response) {
-    const user = req.user;
-    console.log("user:=======>", user);
-    // console.log("user._id", user._id);
+    try {
+      const user = req.user as IUser;
 
-    const currentDate = new Date();
+      if (!user || !user._id) {
+        return res.status(400).json({ message: "Invalid user object" });
+      }
 
-    const currentHours = currentDate.getHours();
-    const currentMinutes = currentDate.getMinutes();
-    const currentTime =
-      currentHours + ":" + (currentMinutes < 10 ? "0" : "") + currentMinutes;
 
-    const reservationData: DRegRides = {
-      from: req.body.pickup,
-      to: req.body.dropoff,
-      vehicleType: req.body.selectedVehicle,
-      passengerId: "dfg",
-      // passengerId: user._id.toString(),
-      date: new Date(), // Add the date from the request
-      time: currentTime,
-    };
+      const reservationData: DRegRides = {
+        from: req.body.pickup,
+        to: req.body.dropoff,
+        vehicleType: req.body.selectedVehicle,
+        passengerId: user._id.toString(),
+        time: new Date(),
+      };
 
-    const reservation = await RidesDao.saveReservation(reservationData);
+      const reservation = await RidesDao.saveReservation(reservationData);
+      if (!reservation) {
+        return res.sendError("Failed to save post");
+      }
+
+      console.log("reservation (0_0)", reservation);
+      return res.sendSuccess(reservation, "Post Saved Successfully!");
+    } catch (error) {
+      console.log("catch error", error);
+    }
   }
 
   class LocationManager {
