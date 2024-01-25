@@ -75,14 +75,14 @@ export const Validations = {
       .not()
       .isEmpty()
       .withMessage(`${key} cannot be empty`)
-      .custom((v) => isObjectId(v))
+      .custom(isObjectId())
       .withMessage(`${key} is not a valid mongoDb objectID`),
   uploads: (key: string = "uploads") =>
     check(`${key}.*._id`)
       .not()
       .isEmpty()
       .withMessage(`${key} objects cannot be empty`)
-      .custom((v) => isObjectId(v))
+      .custom(isObjectId())
       .withMessage(`${key} objects are invalid`),
   validString: (key: string) =>
     check(key)
@@ -93,11 +93,13 @@ export const Validations = {
   validDate: (key: string) =>
     check(key).isISO8601().withMessage(`${key} is not a valid date`),
 };
-export function isObjectId(v: string): boolean {
-  try {
-    const objectId = new Types.ObjectId(v);
-    return true;
-  } catch (error) {
-    return false;
-  }
+export function isObjectId(): (value: any) => boolean {
+  return function (value: any): boolean {
+    try {
+      const objectId = new Types.ObjectId(value);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
 }
