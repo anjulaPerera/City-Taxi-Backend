@@ -1,10 +1,9 @@
 import { Express } from "express";
-import { UserEp } from "../end-points/user-ep";
-import axios from "axios";
-import multer from "multer";
 import { RidesEp } from "../end-points/rides-ep";
 
 export function initRidesRoutes(app: Express) {
-  app.get("/api/get/near-drivers/:userId", UserEp.getNearbyDrivers);
-
+  // app.get("/api/public/get/near-drivers/:userId", RidesEp.getNearbyDrivers);
+  // app.post("/api/auth/post/reservation", RidesEp.passengerReservationRide);
+  app.post("/api/public/post/reservation", RidesEp.passengerReservationRide);
+  app.get("/api/public/get/nearby-drivers", RidesEp.getNearbyDrivers);
 }
