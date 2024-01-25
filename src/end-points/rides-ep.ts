@@ -4,9 +4,9 @@ import { DRegRides } from "../models/reg-rides-model";
 import { IUser } from "../models/user-model";
 import User from "../schemas/user-schema";
 import { UserDao } from "../dao/user-dao";
+import VehicleType from "../enums/VehicleType";
 
 export namespace RidesEp {
-  let reservationData: any;
   export async function passengerReservationRide(req: Request, res: Response) {
     console.log("passengerReservationRide called...");
     try {
@@ -17,6 +17,33 @@ export namespace RidesEp {
         return res.status(400).json({ message: "Invalid user object" });
       }
 
+      function deg2rad(deg: number): number {
+        return deg * (Math.PI / 180);
+      }
+
+      function calculateDistance(
+        lat1: number,
+        lon1: number,
+        lat2: number,
+        lon2: number
+      ): number {
+        const R = 6371; // Radius of the Earth in kilometers
+        const dLat = deg2rad(lat2 - lat1);
+        const dLon = deg2rad(lon2 - lon1);
+
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(deg2rad(lat1)) *
+            Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c; // Distance in kilometers
+
+        return distance;
+      }
+
       const reservationData: DRegRides = {
         from: req.body.pickup,
         to: req.body.dropoff,
@@ -24,6 +51,50 @@ export namespace RidesEp {
         passengerId: user._id.toString(),
         time: new Date(),
       };
+
+      const distanceOfRide = calculateDistance(
+        reservationData.from.coordinates.lat,
+        reservationData.from.coordinates.lng,
+        reservationData.to.coordinates.lat,
+        reservationData.to.coordinates.lng
+      );
+      if (isNaN(distanceOfRide)) {
+        console.log("Invalid distance value");
+        return res.sendError("Invalid distance value");
+      }
+
+      let price = 0;
+
+      if (reservationData.vehicleType === VehicleType.TUK) {
+        console.log("TUK");
+        price = distanceOfRide * parseFloat(process.env.TUK_RATE_PER_KM);
+      } else if (reservationData.vehicleType === VehicleType.CAR) {
+        console.log("CAR");
+        price = distanceOfRide * parseFloat(process.env.CAR_RATE_PER_KM);
+        console.log("price", price);
+        console.log(
+          "parseFloat(process.env.CAR_PRICE_PER_KM)",
+          process.env.CAR_PRICE_PER_KM
+        );
+      } else if (reservationData.vehicleType === VehicleType.VAN) {
+        console.log("VAN");
+        price = distanceOfRide * parseFloat(process.env.VAN_RATE_PER_KM);
+      } else {
+        console.log("Incorrect vehicle type");
+      }
+
+      if (isNaN(price)) {
+        console.log("Invalid price value");
+        return res.sendError("Invalid price value");
+      }
+
+      const formattedPrice = price.toFixed(2);
+      reservationData.price = parseFloat(formattedPrice);
+      console.log("price---------------------", price);
+
+      console.log("distance of ride", distanceOfRide);
+
+      console.log("reservationData======================>>>", reservationData);
 
       const reservation = await RidesDao.saveReservation(reservationData);
       if (!reservation) {
