@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 
 export namespace RidesEp {
+  let reservationData: any;
   export async function passengerReservationRide(req: Request, res: Response) {
     console.log("Inside API");
-    const reservationData = req.body;
+    reservationData = req.body;
     console.log("Received reservation:", reservationData);
 
     res.json({
       message: "Location received successfully",
       data: reservationData,
     });
-
-    return reservationData;
   }
 
   class LocationManager {
@@ -37,14 +36,19 @@ export namespace RidesEp {
   }
 
   export async function getDriversInside3Km(req: Request, res: Response) {
-    // Hardcoded passenger location
+    // Access the stored reservationData
+    console.log("Accessing reservationData:", reservationData);
 
-    // console.log(
-    //   "Response from passengerReservationRide:",
-    //   await passengerReservationRide(req, res)
-    // );
+    const passengerLocation = {
+      lat: 53456,
+      lng: 456546,
+    };
+    // const passengerLocation = {
+    //   lat: reservationData.pickup.coordinates.lat,
+    //   lng: reservationData.pickup.coordinates.lng,
+    // };
 
-    const passengerLocation = { lat: 7.020801, lng: 79.973153 }; //7.020801, 79.973153
+    console.log("Passenger location::::", passengerLocation);
 
     // Create an instance of PassengerLocationManager
     const locationManager = new LocationManager();
