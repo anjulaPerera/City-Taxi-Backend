@@ -47,6 +47,23 @@ export const userSchema = new mongoose.Schema<IUser>(
       type: Schema.Types.String,
       required: true,
     },
+    driverLocation: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: false,
+      },
+      coordinates: {
+        long: {
+          type: Number,
+          required: false,
+        },
+        lat: {
+          type: Number,
+          required: false,
+        },
+      },
+    },
   },
   UserSchemaOptions
 );

@@ -9,6 +9,14 @@ interface Common {
   password?: string;
   phone?: number;
   email?: string;
+  driverLocation?: {
+    type: string;
+    coordinates: {
+      long: number;
+      lat: number;
+    };
+  
+  }
 }
 
 export interface DUser extends Common {

@@ -34,7 +34,6 @@ app.use(ResponseHandler);
 app.use("/api/auth", Authentication.verifyToken);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-
 routes.initRoutes(app);
 
 app.use(function (req: Request, res: Response) {

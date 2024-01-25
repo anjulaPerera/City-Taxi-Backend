@@ -1,5 +1,8 @@
+import UserType from "../enums/UserType";
 import { DRegRides, IRegRides } from "../models/reg-rides-model";
+import { IUser } from "../models/user-model";
 import RegRides from "../schemas/RegRides-schema";
+import User from "../schemas/user-schema";
 
 export namespace RidesDao {
   export async function saveReservation(
@@ -12,4 +15,11 @@ export namespace RidesDao {
       throw error;
     }
   }
+   export async function getAllDrivers(): Promise<IUser[]> {
+     return await User.find({ userType: UserType.DRIVER }).exec();
+   }
+ //find a ride by user id
+    export async function getAllRidesByPassengerId(userId: any): Promise<IRegRides | null> {
+      return await RegRides.find({ passengerId: userId });
+    }
 }

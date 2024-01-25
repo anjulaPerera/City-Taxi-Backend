@@ -2,17 +2,20 @@ import { NextFunction, Request, Response } from "express";
 import { RidesDao } from "../dao/rides-dao";
 import { DRegRides } from "../models/reg-rides-model";
 import { IUser } from "../models/user-model";
+import User from "../schemas/user-schema";
+import { UserDao } from "../dao/user-dao";
 
 export namespace RidesEp {
   let reservationData: any;
   export async function passengerReservationRide(req: Request, res: Response) {
+    console.log("passengerReservationRide called...");
     try {
       const user = req.user as IUser;
+      console.log("USER:::", user);
 
       if (!user || !user._id) {
         return res.status(400).json({ message: "Invalid user object" });
       }
-
 
       const reservationData: DRegRides = {
         from: req.body.pickup,
@@ -34,54 +37,122 @@ export namespace RidesEp {
     }
   }
 
-  class LocationManager {
-    savePassengerLocation(location: { lat: number; lng: number }): void {
-      // Implement the logic to save passenger location
-      console.log("Passenger location saved:", location);
+  export async function getAllDrivers(req: Request, res: Response) {
+    console.log("getAllDrivers called...");
+    try {
+      const drivers = await RidesDao.getAllDrivers();
+
+      res.sendSuccess(drivers, "Post Saved Successfully!");
+      console.log("drivers", drivers);
+    } catch (error) {
+      console.log("catch error", error);
     }
+  }
 
-    getNearbyDrivers(
-      driverLocations: Record<string, { lat: number; lng: number }>
-    ): string[] {
-      // Implement the logic to calculate nearby drivers
-      console.log("Calculating nearby drivers...");
-      const nearbyDrivers: string[] = [];
+  export async function updateLocation(req: Request, res: Response) {
+    console.log("updateLocation called...");
+    const { driverId } = req.body;
 
-      for (const driverId in driverLocations) {
-        const driverLocation = driverLocations[driverId];
-        nearbyDrivers.push(driverId);
+    try {
+      const user = await User.findById(driverId);
+
+      // Check if the user exists and has the userType set to "DRIVER"
+      if (user && user.userType === "DRIVER") {
+        const { coords } = req.body; // Extract the coordinates from the request body
+
+        const updatedDrivers = await User.findByIdAndUpdate(driverId, {
+          driverLocation: {
+            type: "Point",
+            coordinates: { long: coords.longitude, lat: coords.latitude }, // Note the order: [lng, lat]
+          },
+        });
+
+        res.sendSuccess(
+          updatedDrivers,
+          "Locations of Drivers updated successfully"
+        );
+      } else {
+        res
+          .status(404)
+          .json({ message: "Driver not found or not of type DRIVER" });
       }
-
-      return nearbyDrivers;
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
 
   export async function getDriversInside3Km(req: Request, res: Response) {
-    console.log("pickup lat:", reservationData.pickup.coordinates.lat);
-    console.log("pickup lng:", reservationData.pickup.coordinates.lng);
+    try {
+      const userId = req.params.userId;
+      let allRidesByUser = (await RidesDao.getAllRidesByPassengerId(
+        userId
+      )) as any;
+      console.log("ALL RIDES BY USER", allRidesByUser);
 
-    const passengerLocation = {
-      lat: reservationData.pickup.coordinates.lat,
-      lng: reservationData.pickup.coordinates.lng,
-    };
+      //Sort rides by createdAt field in descending order
+      allRidesByUser.sort(
+        (
+          a: { createdAt: { getTime: () => number } },
+          b: { createdAt: { getTime: () => number } }
+        ) => b.createdAt.getTime() - a.createdAt.getTime()
+      );
 
-    console.log("Passenger location::::", passengerLocation);
+      // Get the latest record
+      const latestRide = allRidesByUser[0];
+      const passengerLocation = latestRide.from.coordinates;
+      console.log("LATEST RIDE", latestRide);
+      console.log("PASSENGER LOCATION", passengerLocation);
 
-    // Create an instance of PassengerLocationManager
-    const locationManager = new LocationManager();
-    locationManager.savePassengerLocation(passengerLocation);
+      const drivers = await RidesDao.getAllDrivers();
+      // Declare the distance variable
+      let distance: number;
+      console.log("ALL DRIVERS", drivers);
+      const driversInside3Km = drivers.filter((driver) => {
+        distance = getDriversInside3Km(
+          passengerLocation.lat,
+          passengerLocation.lng,
+          driver.driverLocation.coordinates.lat,
+          driver.driverLocation.coordinates.long
+        );
+        console.log("DISTANCE for", driver.name, distance);
+        const minimumDistance: number = parseFloat(
+          process.env.PASSENGER_TO_DRIVER
+        );
+        console.log("MINIMUM DISTANCE", minimumDistance);
+        console.log("type of minimum distance", typeof minimumDistance);
 
-    const drivers = {};
+        return distance <= minimumDistance;
+      });
 
-    // Hardcoded driver locations
-    const driverLocations: Record<string, { lat: number; lng: number }> = {
-      driver1: { lat: 7.019214, lng: 79.97732 }, //7.019214, 79.977320
-      driver2: { lat: 6.987857, lng: 80.001625 }, //6.987857, 80.001625
-    };
+      const nearByDrivers = { driversInside3Km, distanceToPassenger: distance };
 
-    // Calculate nearby drivers
-    const nearbyDrivers = locationManager.getNearbyDrivers(driverLocations);
+      console.log("DRIVERS INSIDE 3KM", nearByDrivers);
 
-    res.json({ nearbyDrivers });
+      res.sendSuccess(nearByDrivers, "Drivers inside 3km");
+    } catch (error) {}
+
+    function deg2rad(deg: number): number {
+      return deg * (Math.PI / 180);
+    }
+    function getDriversInside3Km(
+      lat1: number,
+      lon1: number,
+      lat2: number,
+      lon2: number
+    ): number {
+      const R = 6371;
+      const dLat = deg2rad(lat2 - lat1);
+      const dLon = deg2rad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) *
+          Math.cos(deg2rad(lat2)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+      return distance;
+    }
   }
 }
