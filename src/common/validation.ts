@@ -1,5 +1,6 @@
 import { check } from "express-validator";
-import { Types } from "mongoose";
+import { Types, Schema } from "mongoose"; // Import Types from mongoose
+
 let dateTime = new Date();
 
 export const Validations = {
@@ -94,5 +95,6 @@ export const Validations = {
 };
 
 export function isObjectId(v: string): boolean {
-  return Types.ObjectId.isValid(v) && Types.ObjectId(v).toHexString() === v;
+  const objectId = new Types.ObjectId(v);
+  return Types.ObjectId.isValid(v) && objectId.toHexString() === v;
 }

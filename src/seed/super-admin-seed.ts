@@ -7,9 +7,8 @@ export default async function seedSuperAdmin() {
   const data01: DUser = {
     name: "super admin",
     email: "superadmin@tempmail.com",
-    userType: UserType.SUPER_ADMIN,
+    userType: UserType.ADMIN,
     password: "abc123",
-    userStatus: UserStatus.ACTIVE,
   };
 
   const superAdmin = await createSuperAdmin(data01);
