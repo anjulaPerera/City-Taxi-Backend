@@ -10,6 +10,8 @@ export namespace RidesEp {
       message: "Location received successfully",
       data: reservationData,
     });
+
+    return reservationData;
   }
 
   class LocationManager {
@@ -34,8 +36,14 @@ export namespace RidesEp {
     }
   }
 
-  export async function getNearbyDrivers(req: Request, res: Response) {
+  export async function getDriversInside3Km(req: Request, res: Response) {
     // Hardcoded passenger location
+
+    // console.log(
+    //   "Response from passengerReservationRide:",
+    //   await passengerReservationRide(req, res)
+    // );
+
     const passengerLocation = { lat: 7.020801, lng: 79.973153 }; //7.020801, 79.973153
 
     // Create an instance of PassengerLocationManager
@@ -54,4 +62,3 @@ export namespace RidesEp {
     res.json({ nearbyDrivers });
   }
 }
-
