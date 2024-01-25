@@ -93,8 +93,11 @@ export const Validations = {
   validDate: (key: string) =>
     check(key).isISO8601().withMessage(`${key} is not a valid date`),
 };
-
 export function isObjectId(v: string): boolean {
-  const objectId = new Types.ObjectId(v);
-  return Types.ObjectId.isValid(v) && objectId.toHexString() === v;
+  try {
+    const objectId = new Types.ObjectId(v);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
