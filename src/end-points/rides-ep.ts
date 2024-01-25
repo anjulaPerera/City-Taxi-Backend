@@ -7,8 +7,8 @@ export namespace RidesEp {
   export async function passengerReservationRide(req: Request, res: Response) {
     const user = req.user;
     console.log("user:=======>", user);
-    console.log("user._id", user._id);
-    
+    // console.log("user._id", user._id);
+
     const currentDate = new Date();
 
     const currentHours = currentDate.getHours();
@@ -20,14 +20,13 @@ export namespace RidesEp {
       from: req.body.pickup,
       to: req.body.dropoff,
       vehicleType: req.body.selectedVehicle,
-      passengerId: user._id.toString(), // Assuming user.id is the passengerId
+      passengerId: "dfg",
+      // passengerId: user._id.toString(),
       date: new Date(), // Add the date from the request
       time: currentTime,
     };
 
-
     const reservation = await RidesDao.saveReservation(reservationData);
-
   }
 
   class LocationManager {
@@ -67,18 +66,7 @@ export namespace RidesEp {
     const locationManager = new LocationManager();
     locationManager.savePassengerLocation(passengerLocation);
 
-    // Hardcoded driver locations
-    const driverLocations: Record<string, { lat: number; lng: number }> = {
-      driver1: { lat: 7.019214, lng: 79.97732 }, //7.019214, 79.977320
-      driver2: { lat: 6.987857, lng: 80.001625 }, //6.987857, 80.001625
-    };
-
-    // Calculate nearby drivers
-    const nearbyDrivers = locationManager.getNearbyDrivers(driverLocations);
-
-    res.json({ nearbyDrivers });
-  }
-}
+    const drivers = {};
 
     // Hardcoded driver locations
     const driverLocations: Record<string, { lat: number; lng: number }> = {
