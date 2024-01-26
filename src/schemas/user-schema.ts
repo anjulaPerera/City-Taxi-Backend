@@ -3,6 +3,7 @@ import { Schema } from "mongoose";
 import * as bcrypt from "bcryptjs";
 import { IUser } from "../models/user-model";
 import UserStatus from "../enums/UserStatus";
+import DriverAvailability from "../enums/DriverAvailability";
 const jwt = require("jsonwebtoken");
 
 export const UserSchemaOptions: mongoose.SchemaOptions = {
@@ -47,6 +48,12 @@ export const userSchema = new mongoose.Schema<IUser>(
       type: Schema.Types.String,
       required: true,
     },
+    availabilityOfDriver: {
+      type: String,
+      enum: DriverAvailability,
+      default: DriverAvailability.AVAILABLE,
+    },
+
     driverLocation: {
       type: {
         type: String,
@@ -111,4 +118,4 @@ userSchema.methods.comparePassword = function (
 };
 
 const User = mongoose.model<IUser>("User", userSchema);
-export default User;
+export default User;
