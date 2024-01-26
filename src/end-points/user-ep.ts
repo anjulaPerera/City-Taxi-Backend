@@ -1,21 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import {
-  check,
-  param,
-  ValidationChain,
-  validationResult,
-} from "express-validator";
+import { check, ValidationChain, validationResult } from "express-validator";
 import { DUser } from "../models/user-model";
-import * as $ from 'jquery';
-import { AdminDao } from "../dao/admin-dao";
 import LoginMethod from "../enums/LoginMethod";
 import User from "../schemas/user-schema";
 import { UserDao } from "../dao/user-dao";
 import { Validations } from "../common/validation";
 import { Util } from "../common/Util";
-import UserStatus from "../enums/UserStatus";
-import upload from "../middleware/upload-images";
-const { ObjectId } = require("mongodb");
 
 export namespace UserEp {
   export function authenticateWithUserNameValidationRules(): ValidationChain[] {
@@ -372,6 +362,6 @@ export namespace UserEp {
       res.sendSuccess(driverAvailability, "Driver Availability Updated!");
     } catch (err) {
       return res.sendError("Something Went Wrong!!");
-    }
-  }
+    }
+  }
 }
