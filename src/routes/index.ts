@@ -2,7 +2,6 @@ import { Express, Request, Response } from "express";
 
 import { initUserRoutes } from "./user";
 import { initAdminRoutes } from "./admin";
-import { initPostsRoutes } from "./posts";
 import { initRidesRoutes } from "./rides";
 
 
@@ -14,7 +13,6 @@ export function initRoutes(app: Express) {
 
   initUserRoutes(app);
   initAdminRoutes(app);
-  initPostsRoutes(app); 
   initRidesRoutes(app);
 
 
