@@ -184,7 +184,6 @@ export namespace UserEp {
       const name = req.body.name;
       const phone = req.body.phone;
       const userType = req.body.userType;
-
       const email = req.body.email;
 
       function getRandomDigits(length: number): string {
@@ -200,7 +199,9 @@ export namespace UserEp {
         }`;
         const randomNum = getRandomDigits(3);
 
-        return `${name}${lastFourDigits}${formattedDate}${randomNum}`;
+        return `${
+          name.toString().split(" ")[0]
+        }${lastFourDigits}${formattedDate}${randomNum}`;
       }
 
       const userName: string = generateRandomUserName(name, phone);

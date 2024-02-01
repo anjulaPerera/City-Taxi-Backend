@@ -8,7 +8,6 @@ interface Common {
   driverId?: string;
   stars?: number;
   comment?: string;
-
 }
 
 export interface DFeedback extends Common {

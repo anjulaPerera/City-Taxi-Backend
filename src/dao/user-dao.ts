@@ -14,6 +14,7 @@ export namespace UserDao {
     try {
       const saveUser = new User(data);
       const userSaved = await saveUser.save();
+
       return userSaved;
     } catch (error) {
       console.error("Error saving user:", error);

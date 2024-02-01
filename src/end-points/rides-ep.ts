@@ -5,6 +5,7 @@ import { IUser } from "../models/user-model";
 import User from "../schemas/user-schema";
 import { UserDao } from "../dao/user-dao";
 import VehicleType from "../enums/VehicleType";
+import Feedbacks from "../schemas/Feedbacks-schema";
 
 export namespace RidesEp {
   export async function passengerReservationRide(req: Request, res: Response) {
@@ -172,14 +173,16 @@ export namespace RidesEp {
       // Get the latest record
       const latestRide = allRidesByUser[0];
       const passengerLocation = latestRide.from.coordinates;
+      console.log("PASSENGER LOCATION===>", passengerLocation);
       console.log("LATEST RIDE", latestRide);
-      console.log("PASSENGER LOCATION", passengerLocation);
 
       const drivers = await RidesDao.getAllDrivers();
       // Declare the distance variable
       let distance: number;
       console.log("ALL DRIVERS", drivers);
       const driversInside3Km = drivers.filter((driver) => {
+        //INCORRECT, SHOULD GET DRIVER CURRENT LOCATION_______________________________________________________________________________________________________________________________________________________________________________________________________________
+        console.log("DRIVER LOCATION===>", driver.driverLocation);
         distance = getDriversInside3Km(
           passengerLocation.lat,
           passengerLocation.lng,
