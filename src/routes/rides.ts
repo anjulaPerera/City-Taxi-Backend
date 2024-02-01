@@ -11,4 +11,7 @@ export function initRidesRoutes(app: Express) {
   app.get("/api/public/get/all-drivers", RidesEp.getAllDrivers);
   app.post("/api/public/update-location", RidesEp.updateLocation);
   app.get("/api/public/get/nearby-drivers/:userId", RidesEp.getDriversInside3Km);
+
+    app.post("/api/auth/post/feedback/:driverId/:userId", RidesEp.addFeedback);
+
 }

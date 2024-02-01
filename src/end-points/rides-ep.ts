@@ -226,4 +226,37 @@ export namespace RidesEp {
       return distance;
     }
   }
+
+  export async function addFeedback(req: Request, res: Response) {
+    console.log("addFeedback called...");
+    try {
+      const driverId = req.params.driverId;
+      const userId = req.params.userId;
+      const { stars, comment } = req.body;
+
+      const driver = await UserDao.getUserById(driverId);
+      const passenger = await UserDao.getUserById(userId);
+
+      if (!driver || !passenger) {
+        return res.sendError("Driver or passenger not found");
+      }
+
+      const feedback = {
+        stars,
+        comment,
+        passengerId: userId,
+        driverId,
+      };
+
+      const savedFeedback = await RidesDao.saveFeedback(feedback);
+
+      if (!savedFeedback) {
+        return res.sendError("Failed to save feedback");
+      }
+
+      return res.sendSuccess(savedFeedback, "Feedback saved successfully");
+    } catch (error) {
+      console.log("catch error", error);
+    }
+  }
 }

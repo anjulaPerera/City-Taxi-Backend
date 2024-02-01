@@ -1,4 +1,5 @@
 import UserType from "../enums/UserType";
+import { DFeedback } from "../models/feedbacks";
 import { DRegRides, IRegRides } from "../models/reg-rides-model";
 import { IUser } from "../models/user-model";
 import RegRides from "../schemas/RegRides-schema";
@@ -24,4 +25,17 @@ export namespace RidesDao {
   ): Promise<IRegRides | null> {
     return await RegRides.find({ passengerId: userId });
   }
+  export async function saveFeedback(
+    feedBackData: DFeedback
+  ): Promise<IRegRides | null> {
+    try {
+      const saveFeedback = await RegRides.create(feedBackData);
+      return saveFeedback;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+
 }
