@@ -73,10 +73,6 @@ export namespace RidesEp {
         console.log("CAR");
         price = distanceOfRide * parseFloat(process.env.CAR_RATE_PER_KM);
         console.log("price", price);
-        console.log(
-          "parseFloat(process.env.CAR_PRICE_PER_KM)",
-          process.env.CAR_PRICE_PER_KM
-        );
       } else if (reservationData.vehicleType === VehicleType.VAN) {
         console.log("VAN");
         price = distanceOfRide * parseFloat(process.env.VAN_RATE_PER_KM);
@@ -181,8 +177,19 @@ export namespace RidesEp {
       let distance: number;
       console.log("ALL DRIVERS", drivers);
       const driversInside3Km = drivers.filter((driver) => {
-        //INCORRECT, SHOULD GET DRIVER CURRENT LOCATION_______________________________________________________________________________________________________________________________________________________________________________________________________________
-        console.log("DRIVER LOCATION===>", driver.driverLocation);
+        //THIS SHOULD GET DRIVER'S CURRENT LOCATION - I WILL USE PASSENGERS PICKUP LOCATION FOR DRIVER LOCARTIONS FOR NOW_______________________________________________________________________________________________________________________________________________________________________________________________________________
+        driver.driverLocation.coordinates.lat = passengerLocation.lat;
+        driver.driverLocation.coordinates.long = passengerLocation.lng;
+
+        console.log(
+          "getDriversInside3Km DATA - driver.driverLocation.coordinates.lat===>",
+          driver.driverLocation.coordinates.lat
+        );
+        console.log(
+          "getDriversInside3Km DATA - driver.driverLocation.coordinates.long===>",
+          driver.driverLocation.coordinates.long
+        );
+
         distance = getDriversInside3Km(
           passengerLocation.lat,
           passengerLocation.lng,
@@ -199,7 +206,16 @@ export namespace RidesEp {
         return distance <= minimumDistance;
       });
 
-      const nearByDrivers = { driversInside3Km, distanceToPassenger: distance };
+      console.log(
+        "DRIVERS INSIDE 3KM==========================",
+        driversInside3Km
+      );
+
+      const availableDrivers = driversInside3Km.filter(
+        (driver) => driver.availabilityOfDriver === "AVAILABLE"
+      );
+
+      const nearByDrivers = { availableDrivers, distanceToPassenger: distance };
 
       console.log("DRIVERS INSIDE 3KM", nearByDrivers);
 

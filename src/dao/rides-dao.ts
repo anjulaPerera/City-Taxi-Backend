@@ -1,3 +1,4 @@
+import DriverAvailability from "../enums/DriverAvailability";
 import UserType from "../enums/UserType";
 import { DFeedback, IFeedback } from "../models/feedbacks";
 import { DRegRides, IRegRides } from "../models/reg-rides-model";
@@ -35,5 +36,11 @@ export namespace RidesDao {
     } catch (error) {
       throw error;
     }
+  }
+  export async function getAvailableDrivers(): Promise<IUser[]> {
+    return await User.find({
+      userType: UserType.DRIVER,
+      availabilityOfDriver: DriverAvailability.AVAILABLE,
+    });
   }
 }
