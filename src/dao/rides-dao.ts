@@ -43,4 +43,16 @@ export namespace RidesDao {
       availabilityOfDriver: DriverAvailability.AVAILABLE,
     });
   }
+
+  export async function getLatestRideByPassengerId(
+    userId: any
+  ): Promise<IRegRides | null> {
+    return await RegRides.findOne({ passengerId: userId }).sort({
+      createdAt: -1,
+    });
+  }
+
+  export async function getDriverPhoneNumber(driverId: string) {
+    return await User.findOne({ _id: driverId }, "phone");
+  }
 }

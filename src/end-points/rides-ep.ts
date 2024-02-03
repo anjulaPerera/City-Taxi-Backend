@@ -5,7 +5,9 @@ import { IUser } from "../models/user-model";
 import User from "../schemas/user-schema";
 import { UserDao } from "../dao/user-dao";
 import VehicleType from "../enums/VehicleType";
-import Feedbacks from "../schemas/Feedbacks-schema";
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require("twilio")(accountSid, authToken);
 
 export namespace RidesEp {
   export async function passengerReservationRide(req: Request, res: Response) {
@@ -274,6 +276,58 @@ export namespace RidesEp {
       }
 
       return res.sendSuccess(savedFeedback, "Feedback saved successfully");
+    } catch (error) {
+      console.log("catch error", error);
+    }
+  }
+
+  export async function sendReservationDataToDriver(
+    req: Request,
+    res: Response
+  ) {
+    console.log("sendReservationDataToDriver called...");
+    try {
+      const driverId = req.params.driverId;
+      const passengerId = req.params.passengerId;
+
+      const driver = await UserDao.getUserById(driverId);
+      const passenger = await UserDao.getUserById(passengerId);
+      const latestRide = await RidesDao.getLatestRideByPassengerId(passengerId);
+
+      console.log("LATEST RIDE", latestRide);
+
+      if (!driver) {
+        return res.sendError("Driver not found");
+      }
+
+      if (!latestRide) {
+        return res.sendError("Driver not found");
+      }
+
+      const fromPhone = process.env.TWILIO_PHONE_NUMBER;
+      console.log("from phone", fromPhone);
+
+      // const toPhone = driver.phone;
+
+      const toPhone = await RidesDao.getDriverPhoneNumber(driverId);
+
+      if (toPhone) {
+        console.log("to phone0000000000", toPhone.phone);
+      } else {
+        console.log("toPhone is undefined");
+      }
+
+      console.log("to phone::::::", toPhone);
+
+      const message = `Please pickup ${passenger.name} from ${latestRide.from.address} and drop them at ${latestRide.to.address}. The price is ${latestRide.price} LKR.`;
+
+      await client.messages.create({
+        from: fromPhone,
+        to: toPhone.phone,
+        body: message, 
+      });
+
+      return res.sendSuccess(latestRide, "Reservation data sent to driver");
     } catch (error) {
       console.log("catch error", error);
     }

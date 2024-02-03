@@ -12,4 +12,5 @@ export function initRidesRoutes(app: Express) {
     RidesEp.getDriversInside3Km
   );
   app.post("/api/auth/post/feedback/:driverId/:userId", RidesEp.addFeedback);
+  app.post("/api/auth/send/reservation-data/to-driver/:passengerId/:driverId", RidesEp.sendReservationDataToDriver);
 }

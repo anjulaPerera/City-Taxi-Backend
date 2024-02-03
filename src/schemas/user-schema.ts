@@ -53,6 +53,10 @@ export const userSchema = new mongoose.Schema<IUser>(
       enum: DriverAvailability,
       default: DriverAvailability.AVAILABLE,
     },
+    phone: {
+      type: Schema.Types.String,
+      required: false,
+    },
 
     driverLocation: {
       type: {
@@ -118,4 +122,4 @@ userSchema.methods.comparePassword = function (
 };
 
 const User = mongoose.model<IUser>("User", userSchema);
-export default User;
+export default User;
