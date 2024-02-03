@@ -301,13 +301,11 @@ export namespace RidesEp {
       }
 
       if (!latestRide) {
-        return res.sendError("Driver not found");
+        return res.sendError("Latest ride not found");
       }
 
       const fromPhone = process.env.TWILIO_PHONE_NUMBER;
       console.log("from phone", fromPhone);
-
-      // const toPhone = driver.phone;
 
       const toPhone = await RidesDao.getDriverPhoneNumber(driverId);
 
@@ -315,6 +313,7 @@ export namespace RidesEp {
         console.log("to phone0000000000", toPhone.phone);
       } else {
         console.log("toPhone is undefined");
+        return res.sendError("Driver phone number not found");
       }
 
       console.log("to phone::::::", toPhone);
@@ -324,12 +323,13 @@ export namespace RidesEp {
       await client.messages.create({
         from: fromPhone,
         to: toPhone.phone,
-        body: message, 
+        body: message,
       });
 
       return res.sendSuccess(latestRide, "Reservation data sent to driver");
     } catch (error) {
       console.log("catch error", error);
+      return res.sendError("Internal server error");
     }
   }
 }
