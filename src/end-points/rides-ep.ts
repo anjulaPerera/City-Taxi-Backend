@@ -221,7 +221,7 @@ export namespace RidesEp {
 
       console.log("DRIVERS INSIDE 3KM", nearByDrivers);
 
-      res.sendSuccess(nearByDrivers, "Drivers inside 3km");
+      res.sendSuccess(drivers, "Drivers inside 3km");
     } catch (error) {}
 
     function deg2rad(deg: number): number {
