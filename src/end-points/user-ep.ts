@@ -77,7 +77,7 @@ export namespace UserEp {
               maxAge: 3600000 * 24 * 30,
             });
 
-            res.sendSuccess(token, "Successfully Logged In!");
+            res.sendSuccess({token, user}, "Successfully Logged In!");
           })
           .catch(next);
       } else {
